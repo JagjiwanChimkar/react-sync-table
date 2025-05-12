@@ -1,0 +1,95 @@
+.responsiveTable td .tdBefore,
+.responsiveTableView td .tdBefore {
+  display: none;
+}
+
+@media screen and (max-width: 450px) {
+  .responsiveTable,
+  .responsiveTable thead,
+  .responsiveTable tbody,
+  .responsiveTable th,
+  .responsiveTable td,
+  .responsiveTable tr,
+  .responsiveTableView,
+  .responsiveTableView thead,
+  .responsiveTableView tbody,
+  .responsiveTableView th,
+  .responsiveTableView td,
+  .responsiveTableView tr {
+    display: block;
+  }
+
+  table.responsiveTable tbody.tableBody,
+  table.responsiveTableView tbody.tableBody {
+    border: none;
+  }
+
+  td.tableCellResponsive div.radioOptionContainer {
+    text-align: left;
+  }
+
+  table.responsiveTable thead tr,
+  table.responsiveTableView thead tr {
+    display: none;
+  }
+
+  .responsiveTable tbody tr.rowTableForm,
+  .responsiveTableView tbody tr.rowView {
+    border: 1px solid #ebedf0;
+    padding: 0.25em;
+  }
+
+  .generateDateContainer {
+    min-height: 37px;
+    border: 1px solid #bbc1c6;
+    border-radius: 5px;
+    padding: 8px;
+    vertical-align: middle;
+  }
+
+  .valueContainerView div {
+    display: block;
+    display: -webkit-box;
+    max-width: 400px;
+    height: auto;
+    text-align: justify;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+  }
+
+  .responsiveTable th.tableCellResponsive,
+  .responsiveTable td.tableCellResponsive {
+    border: none !important;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    height: auto !important;
+  }
+
+  .responsiveTableView td.tableCellResponsive {
+    border: none !important;
+    position: relative;
+    text-align: left !important;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    height: auto !important;
+  }
+
+  .responsiveTable td.tableCellResponsive {
+    margin: 10px;
+  }
+
+  .responsiveTable th.indexHide,
+  .responsiveTableView td.indexHide {
+    display: none;
+  }
+
+  .responsiveTable td .tdBefore,
+  .responsiveTableView td .tdBefore {
+    display: block;
+    left: 1rem;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    text-align: left !important;
+    font-weight: 600;
+  }
+}
