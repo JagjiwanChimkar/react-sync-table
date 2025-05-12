@@ -1,11 +1,15 @@
 {
   "name": "react-sync-table",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "type": "module",
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JagjiwanChimkar/react-sync-table"
+  },
   "main": "./dist/react-sync-table.umd.cjs",
   "module": "./dist/react-sync-table.js",
   "exports": {
