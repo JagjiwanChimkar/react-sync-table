@@ -7,16 +7,50 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import dayjs from "dayjs";
 import snakeCase from "lodash-es/snakeCase";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import type { ActionMeta, SingleValue } from "react-select";
 import Creatable from "react-select/creatable";
 import DurationSelect from "./DurationSelect";
 import NumberInput from "./NumberInput";
 import SingleValueStyle from "./SingleValueStyle";
 
-const ReactSyncTable = ({
+export interface SchemaItem {
+  header: string;
+  headerName: string;
+  type: "display" | "dropdown" | "text" | "duration" | "number";
+  width?: string;
+  options?: Array<{ value: string; label: string }>;
+  closeOnSelection?: boolean;
+  setRespectiveDetail?: string[];
+}
+
+interface ReactSyncTableProps<T> {
+  tableName: string;
+  schema: SchemaItem[];
+  data: T[];
+  onChange: (data: T[]) => void;
+  errors?: Array<Record<string, string>>;
+  hasError?: boolean;
+  maxWidth?: string;
+}
+
+type SelectOption = { value: string; label: string };
+type InputEvent = {
+  value?: string;
+  target?: {
+    name: string;
+    value: string;
+    otherDetails?: Record<string, unknown>;
+  };
+};
+
+const isInputEvent = (evt: unknown): evt is InputEvent => {
+  return evt !== null && typeof evt === "object" && "target" in evt;
+};
+
+const ReactSyncTable = <T extends Record<string, unknown>>({
   tableName,
   schema,
   data,
@@ -24,7 +58,7 @@ const ReactSyncTable = ({
   errors = [],
   hasError = false,
   maxWidth = "1000px",
-}) => {
+}: ReactSyncTableProps<T>) => {
   const tableId = snakeCase(tableName);
 
   const windowWidth = document.documentElement.clientWidth;
@@ -51,14 +85,16 @@ const ReactSyncTable = ({
     // eslint-disable-next-line
   }, [menuOpen]);
 
-  const tableItem = schema.reduce((accumulator, value) => {
-    return {
-      ...accumulator,
-      [value.header]: value.type === "input" ? "" : undefined,
-    };
-  }, {});
+  const getEmptyRow = (): T => {
+    const emptyRow = schema.reduce((accumulator, value) => {
+      return {
+        ...accumulator,
+        [value.header]: value.type === "text" ? "" : undefined,
+      };
+    }, {} as Record<string, unknown>) as T;
 
-  const getEmptyRow = () => ({ ...tableItem });
+    return emptyRow;
+  };
 
   const isRowFilled = (index) => {
     return data?.[index] != null;
@@ -70,53 +106,56 @@ const ReactSyncTable = ({
   };
 
   const handleItemInputChange = (
-    evt,
-    index,
-    action,
-    columnIndex,
-    dat,
+    evt: SingleValue<SelectOption> | InputEvent | null,
+    index: number,
+    action: ActionMeta<SelectOption> | null,
+    columnIndex: number,
+    dat: SchemaItem,
     moveFocus = true
   ) => {
-    if (data == null) {
-      data = [];
-    }
+    const localData = [...(data ?? [])];
 
     if (dat?.closeOnSelection) {
       setMenuOpen(false);
     }
 
-    let itemKey, itemValue;
+    let itemKey: keyof T;
+    let itemValue: unknown;
 
-    if (action != null) {
-      itemKey = action.name.split("-")[0];
-      itemValue = evt?.value;
-    } else {
-      itemKey = evt.target.name;
+    if (action?.name) {
+      itemKey = action.name.split("-")[0] as keyof T;
+      if (evt && "value" in evt) {
+        itemValue = (evt as SelectOption).value ?? "";
+      } else {
+        return;
+      }
+    } else if (isInputEvent(evt) && evt.target) {
+      itemKey = evt.target.name as keyof T;
       itemValue = evt.target.value;
+    } else {
+      return; // Exit if we don't have valid input
     }
 
-    let tableItem = data[index];
+    const tableItem = localData[index] ?? getEmptyRow();
 
-    if (tableItem == null) {
-      tableItem = getEmptyRow();
-      data.push(tableItem);
+    if (index >= localData.length) {
+      localData.push(tableItem);
     }
 
-    if (dat.autoSetTodayDateField && !tableItem[dat.autoSetTodayDateField]) {
-      tableItem[dat.autoSetTodayDateField] = dayjs();
+    tableItem[itemKey] = itemValue as T[keyof T];
+
+    if (isInputEvent(evt) && evt.target?.otherDetails) {
+      dat?.setRespectiveDetail?.forEach((key) => {
+        const detailKey = key as keyof T;
+        tableItem[detailKey] = evt.target!.otherDetails![key] as T[keyof T];
+      });
     }
-
-    tableItem[itemKey] = itemValue;
-
-    dat?.setRespectiveDetail?.forEach((key) => {
-      tableItem[key] = evt.target?.otherDetails?.[key];
-    });
 
     if (moveFocus) {
       handleFocus(index, columnIndex);
     }
 
-    onChange([...data]);
+    onChange(localData);
   };
 
   const handleTextInput = (value, index, header) => {
@@ -129,7 +168,7 @@ const ReactSyncTable = ({
       tableItem = getEmptyRow();
       data.push(tableItem);
     }
-    tableItem[header] = value;
+    (tableItem as Record<string, unknown>)[header] = value.target.value;
     onChange([...data]);
   };
 
@@ -161,9 +200,9 @@ const ReactSyncTable = ({
       }}
       id={tableId}
     >
-      <TableHead>
+      <TableHead sx={{ bgcolor: "rgb(244, 244, 244)" }}>
         <TableRow>
-          <TableCell width="35px" align="center">
+          <TableCell width="5%" align="center">
             #
           </TableCell>
           {schema.map((dat) => {
@@ -173,17 +212,14 @@ const ReactSyncTable = ({
               </TableCell>
             );
           })}
-          <TableCell width={"35px"}></TableCell>
+          <TableCell width="5%"></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {[...(data ?? []), getEmptyRow()].map((item, index) => {
           return (
             <TableRow key={index}>
-              <TableCell
-                key={index}
-                sx={{ textAlign: "center", pt: "0.5rem !important" }}
-              >
+              <TableCell key={index} sx={{ textAlign: "center" }}>
                 {index + 1}
               </TableCell>
               {schema.map((dat, columnIndex) => {
@@ -194,16 +230,15 @@ const ReactSyncTable = ({
                         key={`${dat.headerName}-${index}`}
                         sx={{ p: "0.5rem !important" }}
                       >
-                        {item[dat?.header]}
+                        {String(item[dat?.header] ?? "")}
                       </TableCell>
                     );
 
-                  case "select":
+                  case "dropdown":
                     return (
                       <TableCell key={`${dat.headerName}-${index}`}>
                         <>
-                          <div>{dat?.headerName}</div>
-                          <Creatable
+                          <Creatable<SelectOption>
                             isClearable
                             menuIsOpen={
                               windowWidth < 450
@@ -226,8 +261,8 @@ const ReactSyncTable = ({
                               );
                             }}
                             value={{
-                              value: item[dat?.header] ?? "",
-                              label: item[dat?.header] ?? "",
+                              value: String(item[dat?.header] ?? ""),
+                              label: String(item[dat?.header] ?? ""),
                             }}
                             components={{
                               DropdownIndicator: () => null,
@@ -247,32 +282,32 @@ const ReactSyncTable = ({
                         </>
                       </TableCell>
                     );
-                  case "input":
+
+                  case "text":
                     return (
                       <TableCell key={`${dat.headerName}-${index}`}>
-                        <>
-                          <div>{dat?.headerName}</div>
-                          <TextField
-                            sx={{
+                        <TextField
+                          multiline
+                          size="small"
+                          sx={{
+                            width: "100%",
+                            border: "none",
+                            backgroundColor: "#fff",
+                            borderRadius: 0,
+                            "& fieldset": {
                               border: "none",
-                              backgroundColor: "#fff",
-                              borderRadius: 0,
-                              display: "inline-block",
-                              "& fieldset": {
-                                border: "none",
-                              },
-                            }}
-                            value={data?.[index]?.[dat.header] ?? ""}
-                            onChange={(value) => {
-                              handleTextInput(value, index, dat.header);
-                            }}
-                            ref={(ref) => handleRef(ref, index, columnIndex)}
-                          />
-                        </>
+                            },
+                          }}
+                          value={data?.[index]?.[dat.header] ?? ""}
+                          onChange={(value) => {
+                            handleTextInput(value, index, dat.header);
+                          }}
+                          ref={(ref) => handleRef(ref, index, columnIndex)}
+                        />
                       </TableCell>
                     );
 
-                  case "duration-select":
+                  case "duration":
                     return (
                       <TableCell key={`${dat.headerName}-${index}`}>
                         <>

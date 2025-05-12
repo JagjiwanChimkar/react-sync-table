@@ -26,6 +26,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.1.0",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.15.17",
     "lodash-es": "^4.17.21",
     "react": "^19.1.0",
