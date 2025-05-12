@@ -11,6 +11,9 @@ yarn add react-sync-table
 # or
 pnpm add react-sync-table
 ```
+## Demo
+![react-sync-table](https://github.com/user-attachments/assets/a55a1a6b-fe8e-45af-8059-018935845e6b)
+
 
 ## Basic Usage
 
