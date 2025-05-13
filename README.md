@@ -2,18 +2,9 @@
 
 A powerful React component library for creating synchronized, editable tables with built-in form controls. Perfect for building dynamic data entry forms, CRUD interfaces, and data management tables.
 
-## Quick Start
-
-```bash
-npm install react-sync-table
-# or
-yarn add react-sync-table
-# or
-pnpm add react-sync-table
-```
 ## Demo
-![react-sync-table](https://github.com/user-attachments/assets/a55a1a6b-fe8e-45af-8059-018935845e6b)
 
+![react-sync-table](https://github.com/user-attachments/assets/a55a1a6b-fe8e-45af-8059-018935845e6b)
 
 ## Basic Usage
 

@@ -6,7 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "paths": {
-      "cottage-ui": ["./lib/main.ts"]
+      "react-sync-table": ["./lib/main.ts"]
     },
 
     /* Bundler mode */
