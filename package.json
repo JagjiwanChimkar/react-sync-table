@@ -1,6 +1,6 @@
 {
   "name": "react-sync-table",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "type": "module",
   "files": [
@@ -26,6 +26,22 @@
     "preview": "vite preview",
     "prepublish": "npm run build"
   },
+  "keywords": [
+    "table",
+    "react table",
+    "auto open dropwn",
+    "react sync table",
+    "sync-table",
+    "auto dropdown",
+    "table",
+    "input",
+    "react-select",
+    "multiselect",
+    "react",
+    "react-component",
+    "select",
+    "table select"
+  ],
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
