@@ -9,7 +9,7 @@ type DataType = {
 
 const tableSchema: SchemaItem[] = [
   {
-    header: "country",
+    headerKey: "country",
     headerName: "Country",
     type: "dropdown",
     options: [
@@ -20,7 +20,7 @@ const tableSchema: SchemaItem[] = [
     width: "20%",
   },
   {
-    header: "state",
+    headerKey: "state",
     headerName: "State",
     type: "dropdown",
     options: [
@@ -31,8 +31,8 @@ const tableSchema: SchemaItem[] = [
     ],
     width: "20%",
   },
-  { header: "name", headerName: "Name", type: "text", width: "20%" },
-  { header: "age", headerName: "Age", type: "number", width: "20%" },
+  { headerKey: "name", headerName: "Name", type: "text", width: "20%" },
+  { headerKey: "age", headerName: "Age", type: "number", width: "20%" },
 ];
 
 function App() {
@@ -46,7 +46,6 @@ function App() {
   return (
     <div>
       <ReactSyncTable
-        tableName="DUMMY TABLE"
         schema={tableSchema}
         maxWidth={"1000px"}
         data={data}

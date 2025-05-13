@@ -25,19 +25,19 @@ type UserData = {
 // 2. Create your table schema
 const userTableSchema: SchemaItem[] = [
   {
-    header: "name",
+    headerKey: "name",
     headerName: "Full Name",
     type: "text",
     width: "30%",
   },
   {
-    header: "age",
+    headerKey: "age",
     headerName: "Age",
     type: "number",
     width: "20%",
   },
   {
-    header: "country",
+    headerKey: "country",
     headerName: "Country",
     type: "dropdown",
     options: [
@@ -60,7 +60,6 @@ function UserTable() {
 
   return (
     <ReactSyncTable
-      tableName="users-table"
       schema={userTableSchema}
       data={users}
       onChange={handleDataChange}
@@ -93,19 +92,19 @@ Define how each column should behave using the `SchemaItem` interface:
 ```tsx
 const productSchema: SchemaItem[] = [
   {
-    header: "name",
+    headerKey: "name",
     headerName: "Product Name",
     type: "text",
     width: "30%",
   },
   {
-    header: "price",
+    headerKey: "price",
     headerName: "Price",
     type: "number",
     width: "20%",
   },
   {
-    header: "category",
+    headerKey: "category",
     headerName: "Category",
     type: "dropdown",
     options: [
@@ -116,7 +115,7 @@ const productSchema: SchemaItem[] = [
     width: "25%",
   },
   {
-    header: "inStock",
+    headerKey: "inStock",
     headerName: "Stock Status",
     type: "display", // Read-only display
     width: "15%",
@@ -142,7 +141,6 @@ function ProductTable() {
 
   return (
     <ReactSyncTable
-      tableName="products-table"
       schema={productSchema}
       data={products}
       onChange={handleDataChange}
@@ -186,7 +184,6 @@ function ProductTableWithValidation() {
 
   return (
     <ReactSyncTable
-      tableName="products-table"
       schema={productSchema}
       data={products}
       onChange={handleDataChange}
@@ -205,7 +202,7 @@ The table supports several input types to handle different data needs:
 
    ```tsx
    {
-     header: "description",
+     headerKey: "description",
      headerName: "Description",
      type: "text",
      width: "40%"
@@ -216,7 +213,7 @@ The table supports several input types to handle different data needs:
 
    ```tsx
    {
-     header: "quantity",
+     headerKey: "quantity",
      headerName: "Quantity",
      type: "number",
      width: "20%"
@@ -227,7 +224,7 @@ The table supports several input types to handle different data needs:
 
    ```tsx
    {
-     header: "status",
+     headerKey: "status",
      headerName: "Status",
      type: "dropdown",
      options: [
@@ -243,7 +240,7 @@ The table supports several input types to handle different data needs:
 
    ```tsx
    {
-     header: "duration",
+     headerKey: "duration",
      headerName: "Duration",
      type: "duration",
      width: "20%"
@@ -253,7 +250,7 @@ The table supports several input types to handle different data needs:
 5. **display**: For read-only fields
    ```tsx
    {
-     header: "id",
+     headerKey: "id",
      headerName: "ID",
      type: "display",
      width: "10%"
@@ -262,22 +259,21 @@ The table supports several input types to handle different data needs:
 
 ## Component Props
 
-| Prop      | Type                          | Required | Description                                    |
-| --------- | ----------------------------- | -------- | ---------------------------------------------- |
-| tableName | string                        | Yes      | Unique identifier for the table                |
-| schema    | SchemaItem[]                  | Yes      | Array of column configurations                 |
-| data      | T[]                           | Yes      | Array of objects containing the table data     |
-| onChange  | (data: T[]) => void           | Yes      | Callback function when data changes            |
-| errors    | Array<Record<string, string>> | No       | Validation errors for each cell                |
-| hasError  | boolean                       | No       | Indicates if the table has validation errors   |
-| maxWidth  | string                        | No       | Maximum width of the table (default: "1000px") |
+| Prop | Type | Required | Description |
+| --------- | ----------------------------- | -------- | ---------------------------------------------- | |
+| schema | SchemaItem[] | Yes | Array of column configurations |
+| data | T[] | Yes | Array of objects containing the table data |
+| onChange | (data: T[]) => void | Yes | Callback function when data changes |
+| errors | Array<Record<string, string>> | No | Validation errors for each cell |
+| hasError | boolean | No | Indicates if the table has validation errors |
+| maxWidth | string | No | Maximum width of the table (default: "1000px") |
 
 ## SchemaItem Configuration
 
 ```typescript
 interface SchemaItem {
-  header: string; // Field name in data object
-  headerName: string; // Column header text
+  headerKey: string; // Field name in data object
+  headerName: string; // Column headerKey text
   type: "display" | "dropdown" | "text" | "duration" | "number"; // Input type
   width?: string; // Column width (e.g. "20%")
   options?: Array<{
@@ -306,19 +302,19 @@ interface SchemaItem {
 ```tsx
 const formSchema: SchemaItem[] = [
   {
-    header: "firstName",
+    headerKey: "firstName",
     headerName: "First Name",
     type: "text",
     width: "30%",
   },
   {
-    header: "lastName",
+    headerKey: "lastName",
     headerName: "Last Name",
     type: "text",
     width: "30%",
   },
   {
-    header: "email",
+    headerKey: "email",
     headerName: "Email",
     type: "text",
     width: "40%",
@@ -331,25 +327,25 @@ const formSchema: SchemaItem[] = [
 ```tsx
 const inventorySchema: SchemaItem[] = [
   {
-    header: "productId",
+    headerKey: "productId",
     headerName: "Product ID",
     type: "display",
     width: "15%",
   },
   {
-    header: "name",
+    headerKey: "name",
     headerName: "Product Name",
     type: "text",
     width: "30%",
   },
   {
-    header: "quantity",
+    headerKey: "quantity",
     headerName: "Quantity",
     type: "number",
     width: "15%",
   },
   {
-    header: "category",
+    headerKey: "category",
     headerName: "Category",
     type: "dropdown",
     options: [
@@ -359,7 +355,7 @@ const inventorySchema: SchemaItem[] = [
     width: "20%",
   },
   {
-    header: "status",
+    headerKey: "status",
     headerName: "Status",
     type: "dropdown",
     options: [

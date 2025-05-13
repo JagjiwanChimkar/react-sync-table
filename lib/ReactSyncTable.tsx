@@ -7,17 +7,17 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import snakeCase from "lodash-es/snakeCase";
 import { useEffect, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import type { ActionMeta, SingleValue } from "react-select";
 import Creatable from "react-select/creatable";
+import { v4 as uuidv4 } from "uuid";
 import DurationSelect from "./DurationSelect";
 import NumberInput from "./NumberInput";
 import SingleValueStyle from "./SingleValueStyle";
 
 export interface SchemaItem {
-  header: string;
+  headerKey: string;
   headerName: string;
   type: "display" | "dropdown" | "text" | "duration" | "number";
   width?: string;
@@ -27,7 +27,6 @@ export interface SchemaItem {
 }
 
 interface ReactSyncTableProps<T> {
-  tableName: string;
   schema: SchemaItem[];
   data: T[];
   onChange: (data: T[]) => void;
@@ -51,7 +50,6 @@ const isInputEvent = (evt: unknown): evt is InputEvent => {
 };
 
 const ReactSyncTable = <T extends Record<string, unknown>>({
-  tableName,
   schema,
   data,
   onChange,
@@ -59,7 +57,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
   hasError = false,
   maxWidth = "1000px",
 }: ReactSyncTableProps<T>) => {
-  const tableId = snakeCase(tableName);
+  const tableId = uuidv4();
 
   const windowWidth = document.documentElement.clientWidth;
 
@@ -89,7 +87,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
     const emptyRow = schema.reduce((accumulator, value) => {
       return {
         ...accumulator,
-        [value.header]: value.type === "text" ? "" : undefined,
+        [value.headerKey]: value.type === "text" ? "" : undefined,
       };
     }, {} as Record<string, unknown>) as T;
 
@@ -158,7 +156,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
     onChange(localData);
   };
 
-  const handleTextInput = (value, index, header) => {
+  const handleTextInput = (value, index, headerKey) => {
     if (data == null) {
       data = [];
     }
@@ -168,7 +166,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
       tableItem = getEmptyRow();
       data.push(tableItem);
     }
-    (tableItem as Record<string, unknown>)[header] = value.target.value;
+    (tableItem as Record<string, unknown>)[headerKey] = value.target.value;
     onChange([...data]);
   };
 
@@ -230,7 +228,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                         key={`${dat.headerName}-${index}`}
                         sx={{ p: "0.5rem !important" }}
                       >
-                        {String(item[dat?.header] ?? "")}
+                        {String(item[dat?.headerKey] ?? "")}
                       </TableCell>
                     );
 
@@ -246,7 +244,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                                 : index === currentIndex && menuOpen
                             }
                             tabSelectsValue={false}
-                            name={`${dat.header}-${index}`}
+                            name={`${dat.headerKey}-${index}`}
                             blurInputOnSelect={dat?.closeOnSelection}
                             onChange={(e, action) => {
                               if (dat?.closeOnSelection) {
@@ -261,8 +259,8 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                               );
                             }}
                             value={{
-                              value: String(item[dat?.header] ?? ""),
-                              label: String(item[dat?.header] ?? ""),
+                              value: String(item[dat?.headerKey] ?? ""),
+                              label: String(item[dat?.headerKey] ?? ""),
                             }}
                             components={{
                               DropdownIndicator: () => null,
@@ -270,7 +268,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                             }}
                             options={dat.options}
                             styles={SingleValueStyle(
-                              hasError && !!errors?.[index]?.[dat?.header]
+                              hasError && !!errors?.[index]?.[dat?.headerKey]
                             )}
                             onFocus={() => {
                               setMenuOpen(true);
@@ -298,9 +296,9 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                               border: "none",
                             },
                           }}
-                          value={data?.[index]?.[dat.header] ?? ""}
+                          value={data?.[index]?.[dat.headerKey] ?? ""}
                           onChange={(value) => {
-                            handleTextInput(value, index, dat.header);
+                            handleTextInput(value, index, dat.headerKey);
                           }}
                           ref={(ref) => handleRef(ref, index, columnIndex)}
                         />
@@ -314,8 +312,8 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                           <div>{dat?.headerName}</div>
                           <DurationSelect
                             index={index}
-                            value={item[dat?.header] ?? ""}
-                            name={`${dat.header}-${index}`}
+                            value={item[dat?.headerKey] ?? ""}
+                            name={`${dat.headerKey}-${index}`}
                             handleItemInputChange={(e, index, action) =>
                               handleItemInputChange(
                                 e,
@@ -337,7 +335,7 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                             ref={(ref) => handleRef(ref, index, columnIndex)}
                             onBlur={() => setMenuOpen(false)}
                             hasError={
-                              hasError && !!errors?.[index]?.[dat?.header]
+                              hasError && !!errors?.[index]?.[dat?.headerKey]
                             }
                           />
                         </>
@@ -349,12 +347,12 @@ const ReactSyncTable = <T extends Record<string, unknown>>({
                       <TableCell key={`${dat.headerName}-${index}`}>
                         <NumberInput
                           borderless
-                          value={item?.[dat.header] ?? ""}
+                          value={item?.[dat.headerKey] ?? ""}
                           handleChange={(value) => {
                             const event = {
                               target: {
                                 value: value,
-                                name: dat.header,
+                                name: dat.headerKey,
                               },
                             };
                             handleItemInputChange(
